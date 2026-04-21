@@ -1,0 +1,1981 @@
+{
+  "schema_version": "1.0.0",
+  "project": "Koiboi - Study Space & Note-Taking Application",
+  "description": "Backend database schema for a personal study workspace application with user authentication, subject/topic organization, notes, PDF materials, and code snippets.",
+  "database_type": "PostgreSQL (recommended) or MongoDB",
+  "tables": {
+    "avatar_styles": {
+      "description": "Master table for predefined animated SVG avatar styles",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique avatar style identifier"
+        },
+        "name": {
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "unique": true,
+          "description": "Avatar style name (e.g., 'Floating Orb', 'Bouncing Ball', 'Rotating Cube')"
+        },
+        "slug": {
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "unique": true,
+          "description": "URL-friendly slug for avatar style (e.g., 'floating-orb')"
+        },
+        "description": {
+          "type": "TEXT",
+          "nullable": true,
+          "description": "Description of the avatar animation"
+        },
+        "svg_template": {
+          "type": "TEXT",
+          "nullable": false,
+          "description": "SVG template with animation (can include CSS animations and variables)"
+        },
+        "animation_type": {
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "description": "Type of animation (e.g., 'float', 'bounce', 'rotate', 'pulse', 'wave')"
+        },
+        "animation_duration": {
+          "type": "DECIMAL(5,2)",
+          "nullable": false,
+          "default": 3.0,
+          "description": "Animation duration in seconds"
+        },
+        "color_customizable": {
+          "type": "BOOLEAN",
+          "nullable": false,
+          "default": true,
+          "description": "Whether avatar colors can be customized"
+        },
+        "display_order": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "description": "Order for UI display"
+        },
+        "is_active": {
+          "type": "BOOLEAN",
+          "nullable": false,
+          "default": true,
+          "description": "Whether this avatar style is available for selection"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Record creation timestamp"
+        }
+      },
+      "indexes": [
+        "slug (unique)",
+        "display_order",
+        "is_active",
+        "animation_type"
+      ],
+      "seed_data": [
+        {
+          "name": "Floating Orb",
+          "slug": "floating-orb",
+          "description": "Smooth floating sphere with gradient",
+          "animation_type": "float",
+          "animation_duration": 4.0,
+          "color_customizable": true,
+          "display_order": 1
+        },
+        {
+          "name": "Bouncing Ball",
+          "slug": "bouncing-ball",
+          "description": "Playful bouncing sphere",
+          "animation_type": "bounce",
+          "animation_duration": 1.5,
+          "color_customizable": true,
+          "display_order": 2
+        },
+        {
+          "name": "Rotating Cube",
+          "slug": "rotating-cube",
+          "description": "3D rotating cube with perspective",
+          "animation_type": "rotate",
+          "animation_duration": 6.0,
+          "color_customizable": true,
+          "display_order": 3
+        },
+        {
+          "name": "Pulsing Star",
+          "slug": "pulsing-star",
+          "description": "Star that pulses with light",
+          "animation_type": "pulse",
+          "animation_duration": 2.0,
+          "color_customizable": true,
+          "display_order": 4
+        },
+        {
+          "name": "Wave Motion",
+          "slug": "wave-motion",
+          "description": "Wavy liquid-like motion",
+          "animation_type": "wave",
+          "animation_duration": 3.5,
+          "color_customizable": true,
+          "display_order": 5
+        },
+        {
+          "name": "Spinning Ring",
+          "slug": "spinning-ring",
+          "description": "Concentric spinning rings",
+          "animation_type": "rotate",
+          "animation_duration": 4.0,
+          "color_customizable": true,
+          "display_order": 6
+        },
+        {
+          "name": "Morphing Shape",
+          "slug": "morphing-shape",
+          "description": "Shape that morphs between forms",
+          "animation_type": "morph",
+          "animation_duration": 5.0,
+          "color_customizable": true,
+          "display_order": 7
+        },
+        {
+          "name": "Glowing Particle",
+          "slug": "glowing-particle",
+          "description": "Glowing particles with trail effect",
+          "animation_type": "particle",
+          "animation_duration": 3.0,
+          "color_customizable": true,
+          "display_order": 8
+        }
+      ]
+    },
+    "avatar_colors": {
+      "description": "Master table for avatar color customization options",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique avatar color identifier"
+        },
+        "name": {
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "unique": true,
+          "description": "Color name (e.g., 'Sky Blue', 'Coral', 'Sage Green')"
+        },
+        "hex_code": {
+          "type": "VARCHAR(7)",
+          "nullable": false,
+          "unique": true,
+          "description": "Hex color code (e.g., #7BB7FF)"
+        },
+        "rgb": {
+          "type": "VARCHAR(20)",
+          "nullable": true,
+          "description": "RGB representation (e.g., 'rgb(123, 183, 255)')"
+        },
+        "hsl": {
+          "type": "VARCHAR(50)",
+          "nullable": true,
+          "description": "HSL representation for easier manipulation"
+        },
+        "display_order": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "description": "Order for UI display"
+        },
+        "is_active": {
+          "type": "BOOLEAN",
+          "nullable": false,
+          "default": true,
+          "description": "Whether this color is available for selection"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Record creation timestamp"
+        }
+      },
+      "indexes": [
+        "hex_code (unique)",
+        "display_order",
+        "is_active"
+      ],
+      "seed_data": [
+        { "name": "Sky Blue", "hex_code": "#7BB7FF", "rgb": "rgb(123, 183, 255)", "hsl": "hsl(217, 100%, 66%)", "display_order": 1 },
+        { "name": "Sunny Yellow", "hex_code": "#F4D35E", "rgb": "rgb(244, 211, 94)", "hsl": "hsl(45, 95%, 66%)", "display_order": 2 },
+        { "name": "Mint Green", "hex_code": "#A8DCAB", "rgb": "rgb(168, 220, 171)", "hsl": "hsl(125, 50%, 76%)", "display_order": 3 },
+        { "name": "Coral Pink", "hex_code": "#F4978E", "rgb": "rgb(244, 151, 142)", "hsl": "hsl(6, 90%, 76%)", "display_order": 4 },
+        { "name": "Lavender", "hex_code": "#C8A2FF", "rgb": "rgb(200, 162, 255)", "hsl": "hsl(270, 100%, 74%)", "display_order": 5 },
+        { "name": "Peach", "hex_code": "#FFB37A", "rgb": "rgb(255, 179, 122)", "hsl": "hsl(20, 100%, 74%)", "display_order": 6 },
+        { "name": "Teal", "hex_code": "#9AD9D2", "rgb": "rgb(154, 217, 210)", "hsl": "hsl(172, 50%, 73%)", "display_order": 7 },
+        { "name": "Mauve", "hex_code": "#E5A0C9", "rgb": "rgb(229, 160, 201)", "hsl": "hsl(320, 70%, 76%)", "display_order": 8 }
+      ]
+    },
+    "color_palette": {
+      "description": "Master table for subject and note color themes",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique color palette identifier"
+        },
+        "name": {
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "unique": true,
+          "description": "Palette name (e.g., 'Warm Tones', 'Cool Tones', 'Earthy')"
+        },
+        "description": {
+          "type": "TEXT",
+          "nullable": true,
+          "description": "Description of the color palette theme"
+        },
+        "palette_type": {
+          "type": "ENUM",
+          "enum_values": ["subject", "note", "both"],
+          "nullable": false,
+          "default": "both",
+          "description": "Whether palette is for subjects, notes, or both"
+        },
+        "is_active": {
+          "type": "BOOLEAN",
+          "nullable": false,
+          "default": true,
+          "description": "Whether this palette is available"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Record creation timestamp"
+        }
+      },
+      "indexes": [
+        "palette_type",
+        "is_active"
+      ]
+    },
+    "palette_colors": {
+      "description": "Colors within each palette (junction table)",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique record identifier"
+        },
+        "palette_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "color_palette.id",
+          "on_delete": "CASCADE",
+          "description": "Parent palette"
+        },
+        "hex_code": {
+          "type": "VARCHAR(7)",
+          "nullable": false,
+          "description": "Hex color code (e.g., #9ddaf0)"
+        },
+        "hsl": {
+          "type": "VARCHAR(50)",
+          "nullable": true,
+          "description": "HSL representation (e.g., '36 55% 70%')"
+        },
+        "color_name": {
+          "type": "VARCHAR(100)",
+          "nullable": true,
+          "description": "Name of the color in this palette (e.g., 'Linen', 'Rust')"
+        },
+        "display_order": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "description": "Order within palette"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Record creation timestamp"
+        }
+      },
+      "indexes": [
+        "palette_id",
+        "(palette_id, display_order)"
+      ]
+    },
+    "tint_palette": {
+      "description": "Master table for note/topic tint colors (warm/dusty palette)",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique tint identifier"
+        },
+        "name": {
+          "type": "VARCHAR(100)",
+          "nullable": false,
+          "unique": true,
+          "description": "Tint name (e.g., 'Linen', 'Rust', 'Ochre')"
+        },
+        "hsl": {
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "description": "HSL color triplet (e.g., '36 55% 70%')"
+        },
+        "hex_code": {
+          "type": "VARCHAR(7)",
+          "nullable": true,
+          "description": "Hex equivalent for reference"
+        },
+        "category": {
+          "type": "VARCHAR(50)",
+          "nullable": true,
+          "description": "Color category (e.g., 'warm', 'cool', 'neutral')"
+        },
+        "display_order": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "description": "Order for UI display"
+        },
+        "is_active": {
+          "type": "BOOLEAN",
+          "nullable": false,
+          "default": true,
+          "description": "Whether this tint is available"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Record creation timestamp"
+        }
+      },
+      "indexes": [
+        "display_order",
+        "category",
+        "is_active"
+      ],
+      "seed_data": [
+        { "name": "Linen", "hsl": "36 55% 70%", "hex_code": "#E8D4C0", "category": "warm", "display_order": 1 },
+        { "name": "Rust", "hsl": "14 60% 58%", "hex_code": "#D97060", "category": "warm", "display_order": 2 },
+        { "name": "Ochre", "hsl": "38 70% 58%", "hex_code": "#D9A860", "category": "warm", "display_order": 3 },
+        { "name": "Olive", "hsl": "70 22% 55%", "hex_code": "#9BA860", "category": "neutral", "display_order": 4 },
+        { "name": "Sage", "hsl": "150 18% 58%", "hex_code": "#8FA88A", "category": "cool", "display_order": 5 },
+        { "name": "Slate", "hsl": "210 18% 62%", "hex_code": "#8FA0A8", "category": "cool", "display_order": 6 },
+        { "name": "Plum", "hsl": "300 18% 60%", "hex_code": "#A88AA0", "category": "cool", "display_order": 7 },
+        { "name": "Clay", "hsl": "20 35% 55%", "hex_code": "#C9906B", "category": "warm", "display_order": 8 }
+      ]
+    },
+    "users": {
+      "description": "User accounts and authentication",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique user identifier"
+        },
+        "name": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "description": "User's display name"
+        },
+        "email": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "unique": true,
+          "description": "User's email address (unique)"
+        },
+        "password_hash": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "description": "Bcrypt hashed password (never store plain text)"
+        },
+        "avatar_style_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "avatar_styles.id",
+          "description": "Reference to selected animated SVG avatar style"
+        },
+        "avatar_color_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "avatar_colors.id",
+          "description": "Reference to selected avatar color for customization"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Account creation timestamp"
+        },
+        "updated_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "on_update": "CURRENT_TIMESTAMP",
+          "description": "Last profile update timestamp"
+        },
+        "last_login_at": {
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "description": "Last successful login timestamp"
+        },
+        "is_active": {
+          "type": "BOOLEAN",
+          "nullable": false,
+          "default": true,
+          "description": "Account active status"
+        }
+      },
+      "indexes": [
+        "email (unique)",
+        "created_at",
+        "is_active"
+      ]
+    },
+    "subjects": {
+      "description": "Study subjects (e.g., Data Structures, Operating Systems)",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique subject identifier"
+        },
+        "user_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "users.id",
+          "on_delete": "CASCADE",
+          "description": "Owner of this subject"
+        },
+        "name": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "description": "Subject name (e.g., 'Data Structures & Algorithms')"
+        },
+        "color_id": {
+          "type": "UUID",
+          "nullable": true,
+          "foreign_key": "palette_colors.id",
+          "description": "Reference to color from palette master table"
+        },
+        "description": {
+          "type": "TEXT",
+          "nullable": true,
+          "description": "Optional subject description"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Subject creation timestamp"
+        },
+        "updated_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "on_update": "CURRENT_TIMESTAMP",
+          "description": "Last update timestamp"
+        }
+      },
+      "indexes": [
+        "user_id",
+        "created_at",
+        "(user_id, name)"
+      ]
+    },
+    "topics": {
+      "description": "Topics within subjects (e.g., Graph Algorithms, Dynamic Programming)",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique topic identifier"
+        },
+        "subject_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "subjects.id",
+          "on_delete": "CASCADE",
+          "description": "Parent subject"
+        },
+        "name": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "description": "Topic name (e.g., 'Graph Algorithms')"
+        },
+        "status": {
+          "type": "ENUM",
+          "enum_values": ["not-started", "in-progress", "revising", "completed"],
+          "nullable": false,
+          "default": "not-started",
+          "description": "Learning progress status"
+        },
+        "confidence": {
+          "type": "INTEGER",
+          "nullable": false,
+          "default": 0,
+          "min": 0,
+          "max": 5,
+          "description": "Confidence level (0-5 scale)"
+        },
+        "tint_id": {
+          "type": "UUID",
+          "nullable": true,
+          "foreign_key": "tint_palette.id",
+          "description": "Reference to tint color from master palette"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Topic creation timestamp"
+        },
+        "updated_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "on_update": "CURRENT_TIMESTAMP",
+          "description": "Last update timestamp"
+        }
+      },
+      "indexes": [
+        "subject_id",
+        "status",
+        "created_at",
+        "(subject_id, name)"
+      ]
+    },
+    "notes": {
+      "description": "Study notes with markdown content and optional scribbles",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique note identifier"
+        },
+        "topic_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "topics.id",
+          "on_delete": "CASCADE",
+          "description": "Parent topic"
+        },
+        "title": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "description": "Note title"
+        },
+        "body": {
+          "type": "TEXT",
+          "nullable": false,
+          "description": "Markdown-formatted note content"
+        },
+        "tint_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "tint_palette.id",
+          "description": "Reference to tint color from master palette"
+        },
+        "scribbles": {
+          "type": "JSONB",
+          "nullable": true,
+          "description": "Array of ScribbleStroke objects for hand-drawn annotations",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "tool": { "type": "string", "enum": ["brush"] },
+                "color": { "type": "string" },
+                "width": { "type": "number" },
+                "opacity": { "type": "number" },
+                "points": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "x": { "type": "number" },
+                      "y": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Note creation timestamp"
+        },
+        "updated_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "on_update": "CURRENT_TIMESTAMP",
+          "description": "Last update timestamp"
+        }
+      },
+      "indexes": [
+        "topic_id",
+        "created_at",
+        "updated_at",
+        "(topic_id, created_at)"
+      ]
+    },
+    "materials": {
+      "description": "Study materials (PDFs, documents) uploaded by users",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique material identifier"
+        },
+        "subject_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "subjects.id",
+          "on_delete": "CASCADE",
+          "description": "Associated subject"
+        },
+        "title": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "description": "Material title (e.g., 'CLRS Chapter 22-25')"
+        },
+        "file_name": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "description": "Original filename"
+        },
+        "mime_type": {
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "default": "application/pdf",
+          "description": "MIME type (currently always application/pdf)"
+        },
+        "file_size": {
+          "type": "BIGINT",
+          "nullable": false,
+          "description": "File size in bytes"
+        },
+        "page_count": {
+          "type": "INTEGER",
+          "nullable": true,
+          "description": "Number of pages (for PDFs, populated after first open)"
+        },
+        "storage_key": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "unique": true,
+          "description": "Key to fetch blob from cloud storage (S3, GCS, etc.)"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Upload timestamp"
+        },
+        "updated_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "on_update": "CURRENT_TIMESTAMP",
+          "description": "Last update timestamp"
+        }
+      },
+      "indexes": [
+        "subject_id",
+        "created_at",
+        "storage_key",
+        "(subject_id, created_at)"
+      ]
+    },
+    "playground_snippets": {
+      "description": "Code snippets for testing and experimentation",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique snippet identifier"
+        },
+        "user_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "users.id",
+          "on_delete": "CASCADE",
+          "description": "Owner of this snippet"
+        },
+        "note_id": {
+          "type": "UUID",
+          "nullable": true,
+          "foreign_key": "notes.id",
+          "on_delete": "SET NULL",
+          "description": "Optional associated note"
+        },
+        "language": {
+          "type": "VARCHAR(50)",
+          "nullable": false,
+          "description": "Programming language (e.g., 'javascript', 'python', 'cpp')"
+        },
+        "code": {
+          "type": "TEXT",
+          "nullable": false,
+          "description": "Source code content"
+        },
+        "output": {
+          "type": "TEXT",
+          "nullable": false,
+          "default": "",
+          "description": "Execution output or result"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Snippet creation timestamp"
+        },
+        "updated_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "on_update": "CURRENT_TIMESTAMP",
+          "description": "Last update timestamp"
+        }
+      },
+      "indexes": [
+        "user_id",
+        "note_id",
+        "created_at",
+        "(user_id, created_at)"
+      ]
+    },
+    "user_sessions": {
+      "description": "User authentication sessions (optional, for token-based auth)",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique session identifier"
+        },
+        "user_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "users.id",
+          "on_delete": "CASCADE",
+          "description": "Associated user"
+        },
+        "token": {
+          "type": "VARCHAR(500)",
+          "nullable": false,
+          "unique": true,
+          "description": "JWT or session token"
+        },
+        "expires_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "description": "Token expiration time"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Session creation timestamp"
+        },
+        "ip_address": {
+          "type": "VARCHAR(45)",
+          "nullable": true,
+          "description": "Client IP address for security audit"
+        },
+        "user_agent": {
+          "type": "TEXT",
+          "nullable": true,
+          "description": "Client user agent for security audit"
+        }
+      },
+      "indexes": [
+        "user_id",
+        "token",
+        "expires_at"
+      ]
+    },
+    "password_reset_tokens": {
+      "description": "Temporary tokens for password reset flow",
+      "columns": {
+        "id": {
+          "type": "UUID",
+          "primary_key": true,
+          "nullable": false,
+          "description": "Unique token identifier"
+        },
+        "user_id": {
+          "type": "UUID",
+          "nullable": false,
+          "foreign_key": "users.id",
+          "on_delete": "CASCADE",
+          "description": "Associated user"
+        },
+        "token": {
+          "type": "VARCHAR(255)",
+          "nullable": false,
+          "unique": true,
+          "description": "Reset token (should be cryptographically secure)"
+        },
+        "expires_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "description": "Token expiration (typically 1 hour)"
+        },
+        "created_at": {
+          "type": "TIMESTAMP",
+          "nullable": false,
+          "default": "CURRENT_TIMESTAMP",
+          "description": "Token creation timestamp"
+        },
+        "used_at": {
+          "type": "TIMESTAMP",
+          "nullable": true,
+          "description": "When token was used (null if unused)"
+        }
+      },
+      "indexes": [
+        "user_id",
+        "token",
+        "expires_at"
+      ]
+    }
+  },
+  "relationships": {
+    "user_to_avatar_style": {
+      "type": "many-to-one",
+      "from": "users.avatar_style_id",
+      "to": "avatar_styles.id",
+      "description": "Each user selects one animated SVG avatar style"
+    },
+    "user_to_avatar_color": {
+      "type": "many-to-one",
+      "from": "users.avatar_color_id",
+      "to": "avatar_colors.id",
+      "description": "Each user selects a color to customize their avatar"
+    },
+    "subject_to_palette_color": {
+      "type": "many-to-one",
+      "from": "subjects.color_id",
+      "to": "palette_colors.id",
+      "description": "Each subject optionally references a color from the palette"
+    },
+    "topic_to_tint": {
+      "type": "many-to-one",
+      "from": "topics.tint_id",
+      "to": "tint_palette.id",
+      "description": "Each topic references a tint color from the master palette"
+    },
+    "note_to_tint": {
+      "type": "many-to-one",
+      "from": "notes.tint_id",
+      "to": "tint_palette.id",
+      "description": "Each note references a tint color from the master palette"
+    },
+    "palette_colors_to_palette": {
+      "type": "one-to-many",
+      "from": "color_palette.id",
+      "to": "palette_colors.palette_id",
+      "cascade_delete": true,
+      "description": "A palette contains multiple colors"
+    },
+    "user_to_subjects": {
+      "type": "one-to-many",
+      "from": "users.id",
+      "to": "subjects.user_id",
+      "cascade_delete": true,
+      "description": "A user owns multiple subjects"
+    },
+    "subject_to_topics": {
+      "type": "one-to-many",
+      "from": "subjects.id",
+      "to": "topics.subject_id",
+      "cascade_delete": true,
+      "description": "A subject contains multiple topics"
+    },
+    "topic_to_notes": {
+      "type": "one-to-many",
+      "from": "topics.id",
+      "to": "notes.topic_id",
+      "cascade_delete": true,
+      "description": "A topic contains multiple notes"
+    },
+    "subject_to_materials": {
+      "type": "one-to-many",
+      "from": "subjects.id",
+      "to": "materials.subject_id",
+      "cascade_delete": true,
+      "description": "A subject has multiple study materials"
+    },
+    "user_to_snippets": {
+      "type": "one-to-many",
+      "from": "users.id",
+      "to": "playground_snippets.user_id",
+      "cascade_delete": true,
+      "description": "A user creates multiple code snippets"
+    },
+    "note_to_snippets": {
+      "type": "one-to-many",
+      "from": "notes.id",
+      "to": "playground_snippets.note_id",
+      "cascade_delete": "SET NULL",
+      "description": "A note can have associated code snippets (optional)"
+    },
+    "user_to_sessions": {
+      "type": "one-to-many",
+      "from": "users.id",
+      "to": "user_sessions.user_id",
+      "cascade_delete": true,
+      "description": "A user can have multiple active sessions"
+    },
+    "user_to_reset_tokens": {
+      "type": "one-to-many",
+      "from": "users.id",
+      "to": "password_reset_tokens.user_id",
+      "cascade_delete": true,
+      "description": "A user can have multiple reset tokens"
+    }
+  },
+  "enums": {
+    "note_status": {
+      "values": ["not-started", "in-progress", "revising", "completed"],
+      "description": "Learning progress status for topics"
+    },
+    "palette_type": {
+      "values": ["subject", "note", "both"],
+      "description": "Type of palette - for subjects, notes, or both"
+    }
+  },
+  "constraints": {
+    "unique_constraints": [
+      "users.email",
+      "materials.storage_key",
+      "user_sessions.token",
+      "password_reset_tokens.token"
+    ],
+    "check_constraints": [
+      {
+        "table": "topics",
+        "constraint": "confidence >= 0 AND confidence <= 5",
+        "description": "Confidence must be between 0 and 5"
+      },
+      {
+        "table": "users",
+        "constraint": "email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$'",
+        "description": "Email must be valid format"
+      }
+    ]
+  },
+  "data_types_reference": {
+    "UUID": "Universally unique identifier (36 characters)",
+    "VARCHAR(n)": "Variable-length string up to n characters",
+    "TEXT": "Large text field (unlimited length)",
+    "JSONB": "JSON binary format (PostgreSQL) - supports indexing and querying",
+    "TIMESTAMP": "Date and time with timezone",
+    "INTEGER": "32-bit signed integer",
+    "BIGINT": "64-bit signed integer",
+    "BOOLEAN": "True/False value",
+    "ENUM": "Enumerated type with predefined values"
+  },
+  "master_data_explanation": {
+    "overview": "Master tables provide centralized management of predefined options that users can choose from, ensuring consistency and easy updates across the application.",
+    "avatar_styles": {
+      "purpose": "Predefined animated SVG avatar styles that users can choose from",
+      "usage": "When users sign up, they select from this palette of animated avatars. The avatar_style_id is stored in the users table.",
+      "features": [
+        "8 unique animated SVG styles (Floating Orb, Bouncing Ball, Rotating Cube, etc.)",
+        "Each style has its own animation type and duration",
+        "Supports color customization (most styles are color-customizable)",
+        "SVG templates stored in database for easy updates",
+        "Animation types: float, bounce, rotate, pulse, wave, morph, particle"
+      ],
+      "benefits": [
+        "Unique, personalized avatars for each user",
+        "Smooth animations enhance user experience",
+        "Easy to add new avatar styles without code changes",
+        "Can track avatar style popularity",
+        "Supports accessibility (can disable animations if needed)"
+      ],
+      "example_flow": "User signs up → Selects avatar style (e.g., 'Floating Orb') → Selects color (e.g., 'Sky Blue') → avatar_style_id and avatar_color_id stored → Avatar rendered with SVG template + selected color"
+    },
+    "avatar_colors": {
+      "purpose": "Color customization options for animated avatars",
+      "usage": "Users select a color to customize their chosen avatar style. The avatar_color_id is stored in the users table.",
+      "features": [
+        "8 predefined colors (Sky Blue, Coral Pink, Lavender, etc.)",
+        "Each color has hex, RGB, and HSL representations",
+        "Colors can be applied to any color-customizable avatar style",
+        "Easy to enable/disable colors via is_active flag"
+      ],
+      "benefits": [
+        "Consistent color palette across avatars",
+        "Easy to update colors globally",
+        "Supports color-blind friendly palettes",
+        "Can track color popularity"
+      ],
+      "example_flow": "User selects 'Floating Orb' style → Chooses 'Sky Blue' color → Avatar renders with blue-tinted floating orb animation"
+    },
+    "color_palette": {
+      "purpose": "Organize colors into themed palettes (e.g., 'Warm Tones', 'Cool Tones', 'Earthy')",
+      "usage": "Subjects can reference colors from these palettes. Allows grouping related colors together.",
+      "benefits": [
+        "Organize colors by theme or mood",
+        "Support multiple color schemes",
+        "Easy to enable/disable entire palettes",
+        "Can have palette-specific colors"
+      ],
+      "example_flow": "Admin creates 'Warm Tones' palette → Adds 8 colors to it → Users select subject color from palette → color_id stored in subjects table"
+    },
+    "palette_colors": {
+      "purpose": "Junction table linking colors to palettes",
+      "usage": "Stores individual colors within each palette with their order and metadata",
+      "structure": "Many-to-many relationship between color_palette and actual colors",
+      "example": "Palette 'Warm Tones' contains: Linen (#E8D4C0), Rust (#D97060), Ochre (#D9A860), Clay (#C9906B)"
+    },
+    "tint_palette": {
+      "purpose": "Master palette of warm/dusty tints specifically for notes and topics",
+      "usage": "Notes and topics reference tint_id from this table instead of storing raw HSL strings",
+      "benefits": [
+        "Consistent tint colors across all notes/topics",
+        "Easy to update all tints globally",
+        "Can categorize tints (warm, cool, neutral)",
+        "Reduces data duplication"
+      ],
+      "example_flow": "Note created → System assigns random tint_id from tint_palette → Note stores tint_id → UI fetches HSL from tint_palette table"
+    },
+    "data_consistency": "By using master tables, if you want to change a color, you update it once in the master table and all references automatically use the new value.",
+    "migration_strategy": [
+      "1. Create master tables: avatar_styles, avatar_colors, color_palette, palette_colors, tint_palette",
+      "2. Seed avatar_styles with 8 animated SVG templates",
+      "3. Seed avatar_colors with 8 color options",
+      "4. Add avatar_style_id and avatar_color_id columns to users table",
+      "5. Migrate existing user data (assign default avatar style and color)",
+      "6. Drop old avatar_color column from users",
+      "7. Add NOT NULL constraints to new avatar columns"
+    ]
+  },
+  "security_considerations": {
+    "password_storage": "Always use bcrypt or similar with salt. Never store plain text passwords.",
+    "token_security": "Use cryptographically secure random tokens for reset/session tokens.",
+    "sql_injection": "Use parameterized queries/prepared statements in all database operations.",
+    "data_validation": "Validate all user inputs on backend before database insertion.",
+    "rate_limiting": "Implement rate limiting on auth endpoints (sign-up, sign-in, password reset).",
+    "cors": "Configure CORS properly to prevent unauthorized cross-origin requests.",
+    "https": "Always use HTTPS in production for all API communications.",
+    "audit_logging": "Log all authentication events and sensitive operations.",
+    "soft_deletes": "Consider soft deletes for user data retention and compliance."
+  },
+  "performance_recommendations": {
+    "indexing": "Indexes are defined on foreign keys and frequently queried columns",
+    "pagination": "Implement pagination for list endpoints (subjects, topics, notes, materials)",
+    "caching": "Cache user profile and subject/topic hierarchy in Redis",
+    "query_optimization": "Use database query analysis tools to identify slow queries",
+    "connection_pooling": "Use connection pooling (e.g., PgBouncer for PostgreSQL)",
+    "batch_operations": "Support batch operations for bulk note/topic creation"
+  },
+  "api_configuration": {
+    "base_url": "https://api.koiboi.app/v1",
+    "timeout": 30000,
+    "headers_non_auth": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "User-Agent": "Koiboi-Client/1.0"
+    },
+    "headers_auth": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "User-Agent": "Koiboi-Client/1.0",
+      "Authorization": "Bearer {access_token}"
+    },
+    "response_format": {
+      "success": {
+        "status": 200,
+        "body": {
+          "success": true,
+          "data": {},
+          "message": "Operation successful"
+        }
+      },
+      "error": {
+        "status": 400,
+        "body": {
+          "success": false,
+          "error": "error_code",
+          "message": "Error description",
+          "details": {}
+        }
+      }
+    }
+  },
+  "api_endpoints": {
+    "master_data": {
+      "GET /master/avatar-styles": {
+        "description": "List all available animated SVG avatar styles",
+        "auth_required": false,
+        "headers": "headers_non_auth",
+        "request_body": null,
+        "query_params": {
+          "limit": "integer (default: 50)",
+          "offset": "integer (default: 0)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "uuid",
+                "name": "Floating Orb",
+                "slug": "floating-orb",
+                "description": "Smooth floating sphere with gradient",
+                "animation_type": "float",
+                "animation_duration": 4.0,
+                "color_customizable": true,
+                "display_order": 1,
+                "is_active": true
+              }
+            ],
+            "total": 8
+          }
+        }
+      },
+      "GET /master/avatar-styles/:id": {
+        "description": "Get specific avatar style with SVG template",
+        "auth_required": false,
+        "headers": "headers_non_auth",
+        "request_body": null,
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "Floating Orb",
+              "slug": "floating-orb",
+              "description": "Smooth floating sphere with gradient",
+              "svg_template": "<svg>...</svg>",
+              "animation_type": "float",
+              "animation_duration": 4.0,
+              "color_customizable": true
+            }
+          }
+        }
+      },
+      "GET /master/avatar-colors": {
+        "description": "List all available avatar colors",
+        "auth_required": false,
+        "headers": "headers_non_auth",
+        "request_body": null,
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "uuid",
+                "name": "Sky Blue",
+                "hex_code": "#7BB7FF",
+                "rgb": "rgb(123, 183, 255)",
+                "hsl": "hsl(217, 100%, 66%)",
+                "display_order": 1
+              }
+            ],
+            "total": 8
+          }
+        }
+      },
+      "GET /master/tint-palette": {
+        "description": "List all available tint colors for notes/topics",
+        "auth_required": false,
+        "headers": "headers_non_auth",
+        "request_body": null,
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "uuid",
+                "name": "Linen",
+                "hsl": "36 55% 70%",
+                "hex_code": "#E8D4C0",
+                "category": "warm",
+                "display_order": 1
+              }
+            ],
+            "total": 8
+          }
+        }
+      }
+    },
+    "auth": {
+      "POST /auth/sign-up": {
+        "description": "Create new user account",
+        "auth_required": false,
+        "headers": "headers_non_auth",
+        "request_body": {
+          "name": "string (required, min: 2, max: 100)",
+          "email": "string (required, valid email)",
+          "password": "string (required, min: 6, max: 128)",
+          "avatar_style_id": "uuid (required)",
+          "avatar_color_id": "uuid (required)"
+        },
+        "response": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "John Doe",
+              "email": "john@example.com",
+              "avatar_style_id": "uuid",
+              "avatar_color_id": "uuid",
+              "created_at": "2026-04-21T10:00:00Z"
+            },
+            "token": "eyJhbGciOiJIUzI1NiIs..."
+          }
+        }
+      },
+      "POST /auth/sign-in": {
+        "description": "Authenticate user and create session",
+        "auth_required": false,
+        "headers": "headers_non_auth",
+        "request_body": {
+          "email": "string (required, valid email)",
+          "password": "string (required)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "John Doe",
+              "email": "john@example.com",
+              "avatar_style_id": "uuid",
+              "avatar_color_id": "uuid"
+            },
+            "token": "eyJhbGciOiJIUzI1NiIs...",
+            "expires_in": 86400
+          }
+        }
+      },
+      "POST /auth/sign-out": {
+        "description": "Invalidate user session",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "request_body": null,
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Signed out successfully"
+          }
+        }
+      },
+      "POST /auth/forgot-password": {
+        "description": "Request password reset token",
+        "auth_required": false,
+        "headers": "headers_non_auth",
+        "request_body": {
+          "email": "string (required, valid email)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Password reset email sent"
+          }
+        }
+      },
+      "POST /auth/reset-password": {
+        "description": "Reset password with token",
+        "auth_required": false,
+        "headers": "headers_non_auth",
+        "request_body": {
+          "email": "string (required)",
+          "token": "string (required)",
+          "new_password": "string (required, min: 6)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Password reset successfully"
+          }
+        }
+      },
+      "POST /auth/change-password": {
+        "description": "Change password (authenticated user)",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "request_body": {
+          "current_password": "string (required)",
+          "new_password": "string (required, min: 6)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Password changed successfully"
+          }
+        }
+      }
+    },
+    "users": {
+      "GET /users/me": {
+        "description": "Get current user profile",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "request_body": null,
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "John Doe",
+              "email": "john@example.com",
+              "avatar_style_id": "uuid",
+              "avatar_color_id": "uuid",
+              "created_at": "2026-04-21T10:00:00Z",
+              "updated_at": "2026-04-21T10:00:00Z"
+            }
+          }
+        }
+      },
+      "PATCH /users/me": {
+        "description": "Update user profile",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "request_body": {
+          "name": "string (optional, min: 2, max: 100)",
+          "avatar_style_id": "uuid (optional)",
+          "avatar_color_id": "uuid (optional)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "Jane Doe",
+              "email": "john@example.com",
+              "avatar_style_id": "uuid",
+              "avatar_color_id": "uuid",
+              "updated_at": "2026-04-21T11:00:00Z"
+            }
+          }
+        }
+      }
+    },
+    "subjects": {
+      "GET /subjects": {
+        "description": "List all subjects for user",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "request_body": null,
+        "query_params": {
+          "limit": "integer (default: 50)",
+          "offset": "integer (default: 0)",
+          "sort": "string (created_at, name)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "uuid",
+                "name": "Data Structures & Algorithms",
+                "color_id": "uuid",
+                "description": "Study materials for DSA",
+                "created_at": "2026-04-21T10:00:00Z",
+                "updated_at": "2026-04-21T10:00:00Z"
+              }
+            ],
+            "total": 3
+          }
+        }
+      },
+      "POST /subjects": {
+        "description": "Create new subject",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "request_body": {
+          "name": "string (required, min: 1, max: 255)",
+          "color_id": "uuid (optional)",
+          "description": "string (optional, max: 1000)"
+        },
+        "response": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "Data Structures & Algorithms",
+              "color_id": "uuid",
+              "description": "Study materials for DSA",
+              "created_at": "2026-04-21T10:00:00Z"
+            }
+          }
+        }
+      },
+      "PATCH /subjects/:id": {
+        "description": "Update subject",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "request_body": {
+          "name": "string (optional)",
+          "color_id": "uuid (optional)",
+          "description": "string (optional)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "Data Structures & Algorithms",
+              "color_id": "uuid",
+              "updated_at": "2026-04-21T11:00:00Z"
+            }
+          }
+        }
+      },
+      "DELETE /subjects/:id": {
+        "description": "Delete subject (cascade deletes topics/notes)",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Subject deleted successfully"
+          }
+        }
+      }
+    },
+    "topics": {
+      "GET /subjects/:subjectId/topics": {
+        "description": "List topics in subject",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "subjectId": "uuid"
+        },
+        "query_params": {
+          "limit": "integer (default: 50)",
+          "offset": "integer (default: 0)",
+          "status": "string (not-started, in-progress, revising, completed)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "uuid",
+                "name": "Graph Algorithms",
+                "status": "in-progress",
+                "confidence": 3,
+                "tint_id": "uuid",
+                "created_at": "2026-04-21T10:00:00Z"
+              }
+            ],
+            "total": 6
+          }
+        }
+      },
+      "POST /subjects/:subjectId/topics": {
+        "description": "Create topic",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "subjectId": "uuid"
+        },
+        "request_body": {
+          "name": "string (required, min: 1, max: 255)",
+          "tint_id": "uuid (optional)"
+        },
+        "response": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "Graph Algorithms",
+              "status": "not-started",
+              "confidence": 0,
+              "tint_id": "uuid",
+              "created_at": "2026-04-21T10:00:00Z"
+            }
+          }
+        }
+      },
+      "PATCH /topics/:id": {
+        "description": "Update topic",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "request_body": {
+          "name": "string (optional)",
+          "status": "string (optional, enum: not-started, in-progress, revising, completed)",
+          "confidence": "integer (optional, 0-5)",
+          "tint_id": "uuid (optional)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "name": "Graph Algorithms",
+              "status": "in-progress",
+              "confidence": 4,
+              "updated_at": "2026-04-21T11:00:00Z"
+            }
+          }
+        }
+      },
+      "DELETE /topics/:id": {
+        "description": "Delete topic",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Topic deleted successfully"
+          }
+        }
+      }
+    },
+    "notes": {
+      "GET /topics/:topicId/notes": {
+        "description": "List notes in topic",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "topicId": "uuid"
+        },
+        "query_params": {
+          "limit": "integer (default: 50)",
+          "offset": "integer (default: 0)",
+          "sort": "string (created_at, updated_at)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "uuid",
+                "title": "BFS vs DFS Cheat Sheet",
+                "body": "## Traversals\n\n- BFS uses a queue",
+                "tint_id": "uuid",
+                "created_at": "2026-04-21T10:00:00Z",
+                "updated_at": "2026-04-21T10:00:00Z"
+              }
+            ],
+            "total": 4
+          }
+        }
+      },
+      "POST /topics/:topicId/notes": {
+        "description": "Create note",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "topicId": "uuid"
+        },
+        "request_body": {
+          "title": "string (required, min: 1, max: 255)",
+          "body": "string (optional, markdown)",
+          "tint_id": "uuid (optional)"
+        },
+        "response": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "title": "New Note",
+              "body": "",
+              "tint_id": "uuid",
+              "created_at": "2026-04-21T10:00:00Z"
+            }
+          }
+        }
+      },
+      "GET /notes/:id": {
+        "description": "Get note details",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "title": "BFS vs DFS Cheat Sheet",
+              "body": "## Traversals\n\n- BFS uses a queue\n- DFS uses recursion/stack",
+              "tint_id": "uuid",
+              "scribbles": [],
+              "created_at": "2026-04-21T10:00:00Z",
+              "updated_at": "2026-04-21T10:00:00Z"
+            }
+          }
+        }
+      },
+      "PATCH /notes/:id": {
+        "description": "Update note",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "request_body": {
+          "title": "string (optional)",
+          "body": "string (optional, markdown)",
+          "tint_id": "uuid (optional)",
+          "scribbles": "array (optional, ScribbleStroke objects)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "title": "BFS vs DFS Cheat Sheet",
+              "body": "## Traversals\n\n- BFS uses a queue\n- DFS uses recursion/stack\n- Updated content",
+              "updated_at": "2026-04-21T11:00:00Z"
+            }
+          }
+        }
+      },
+      "DELETE /notes/:id": {
+        "description": "Delete note",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Note deleted successfully"
+          }
+        }
+      }
+    },
+    "materials": {
+      "GET /subjects/:subjectId/materials": {
+        "description": "List materials in subject",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "subjectId": "uuid"
+        },
+        "query_params": {
+          "limit": "integer (default: 50)",
+          "offset": "integer (default: 0)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "uuid",
+                "title": "CLRS Chapter 22-25",
+                "file_name": "CLRS-Graphs.pdf",
+                "mime_type": "application/pdf",
+                "file_size": 4600000,
+                "page_count": 120,
+                "created_at": "2026-04-21T10:00:00Z"
+              }
+            ],
+            "total": 3
+          }
+        }
+      },
+      "POST /subjects/:subjectId/materials": {
+        "description": "Upload material (multipart/form-data)",
+        "auth_required": true,
+        "headers": {
+          "Authorization": "Bearer {access_token}",
+          "Content-Type": "multipart/form-data"
+        },
+        "path_params": {
+          "subjectId": "uuid"
+        },
+        "request_body": {
+          "title": "string (required)",
+          "file": "file (required, PDF only)"
+        },
+        "response": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "title": "CLRS Chapter 22-25",
+              "file_name": "CLRS-Graphs.pdf",
+              "mime_type": "application/pdf",
+              "file_size": 4600000,
+              "storage_key": "materials/uuid/CLRS-Graphs.pdf",
+              "created_at": "2026-04-21T10:00:00Z"
+            }
+          }
+        }
+      },
+      "GET /materials/:id": {
+        "description": "Get material metadata",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "title": "CLRS Chapter 22-25",
+              "file_name": "CLRS-Graphs.pdf",
+              "mime_type": "application/pdf",
+              "file_size": 4600000,
+              "page_count": 120,
+              "created_at": "2026-04-21T10:00:00Z"
+            }
+          }
+        }
+      },
+      "PATCH /materials/:id": {
+        "description": "Update material metadata",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "request_body": {
+          "title": "string (optional)",
+          "page_count": "integer (optional)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "title": "CLRS Chapter 22-25 (Updated)",
+              "page_count": 120,
+              "updated_at": "2026-04-21T11:00:00Z"
+            }
+          }
+        }
+      },
+      "DELETE /materials/:id": {
+        "description": "Delete material",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Material deleted successfully"
+          }
+        }
+      },
+      "GET /materials/:id/download": {
+        "description": "Download material file",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "headers": {
+            "Content-Type": "application/pdf",
+            "Content-Disposition": "attachment; filename=CLRS-Graphs.pdf"
+          },
+          "body": "binary file content"
+        }
+      }
+    },
+    "snippets": {
+      "GET /snippets": {
+        "description": "List user's code snippets",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "query_params": {
+          "limit": "integer (default: 50)",
+          "offset": "integer (default: 0)",
+          "language": "string (optional, filter by language)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "uuid",
+                "language": "javascript",
+                "code": "function bfs(graph) { ... }",
+                "output": "",
+                "created_at": "2026-04-21T10:00:00Z"
+              }
+            ],
+            "total": 5
+          }
+        }
+      },
+      "POST /snippets": {
+        "description": "Create code snippet",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "request_body": {
+          "language": "string (required, javascript, python, cpp, java, etc.)",
+          "code": "string (required)",
+          "note_id": "uuid (optional)"
+        },
+        "response": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "language": "javascript",
+              "code": "function bfs(graph) { ... }",
+              "output": "",
+              "created_at": "2026-04-21T10:00:00Z"
+            }
+          }
+        }
+      },
+      "PATCH /snippets/:id": {
+        "description": "Update snippet",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "request_body": {
+          "code": "string (optional)",
+          "output": "string (optional)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "uuid",
+              "language": "javascript",
+              "code": "function bfs(graph) { ... updated ... }",
+              "updated_at": "2026-04-21T11:00:00Z"
+            }
+          }
+        }
+      },
+      "DELETE /snippets/:id": {
+        "description": "Delete snippet",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "Snippet deleted successfully"
+          }
+        }
+      },
+      "POST /snippets/:id/execute": {
+        "description": "Execute snippet (optional backend execution)",
+        "auth_required": true,
+        "headers": "headers_auth",
+        "path_params": {
+          "id": "uuid"
+        },
+        "request_body": {
+          "input": "string (optional, stdin for program)"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "output": "program output",
+              "execution_time": 0.234,
+              "status": "success"
+            }
+          }
+        }
+      }
+    }
+  },
+  "example_queries": {
+    "get_user_dashboard": "SELECT s.*, COUNT(DISTINCT t.id) as topic_count, COUNT(DISTINCT n.id) as note_count FROM subjects s LEFT JOIN topics t ON s.id = t.subject_id LEFT JOIN notes n ON t.id = n.topic_id WHERE s.user_id = $1 GROUP BY s.id ORDER BY s.created_at DESC",
+    "get_topic_with_notes": "SELECT t.*, COUNT(n.id) as note_count FROM topics t LEFT JOIN notes n ON t.id = n.topic_id WHERE t.id = $1 GROUP BY t.id",
+    "search_notes": "SELECT n.* FROM notes n JOIN topics t ON n.topic_id = t.id JOIN subjects s ON t.subject_id = s.id WHERE s.user_id = $1 AND (n.title ILIKE $2 OR n.body ILIKE $2) ORDER BY n.updated_at DESC LIMIT 50",
+    "get_user_progress": "SELECT s.id, s.name, COUNT(DISTINCT t.id) as total_topics, SUM(CASE WHEN t.status = 'completed' THEN 1 ELSE 0 END) as completed_topics, AVG(t.confidence) as avg_confidence FROM subjects s LEFT JOIN topics t ON s.id = t.subject_id WHERE s.user_id = $1 GROUP BY s.id"
+  },
+  "phases":{
+   "phase_1": "Create core tables: users, subjects, topics, notes, materials",
+    "phase_2": "Add authentication tables: user_sessions, password_reset_tokens",
+    "phase_3": "Add playground_snippets table for code execution feature",
+    "phase_4": "Add indexes for performance optimization",
+    "phase_5": "Add audit logging and soft deletes if needed"
+  }
+}
