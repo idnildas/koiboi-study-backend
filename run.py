@@ -20,7 +20,8 @@ if not os.path.exists(uvicorn_path):
     )
     sys.exit(1)
 
-args = [uvicorn_path, "app.main:app", "--reload", "--app-dir", "src"]
+port = os.environ.get("PORT", "8080")
+args = [uvicorn_path, "app.main:app", "--reload", "--app-dir", "src", "--port", port]
 
 # Ensure the venv site-packages are on PYTHONPATH for reload subprocesses
 venv_site_packages = os.path.join(HERE, ".venv", "lib", "python3.12", "site-packages")

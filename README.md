@@ -18,4 +18,4 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --app-dir src
 ```
 
-3. Open http://127.0.0.1:8000/docs for the OpenAPI UI.
+3. Open http://127.0.0.1:8080/docs for the OpenAPI UI.
