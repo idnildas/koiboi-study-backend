@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     APP_NAME: str = Field(default="Koiboi Study Backend")
     DEBUG: bool = Field(default=False)
     HOST: str = Field(default="0.0.0.0")
-    PORT: int = Field(default=8000)
+    PORT: int = Field(default=8080)
 
     # Database Configuration (Required)
     DATABASE_URL: str = Field(

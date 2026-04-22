@@ -23,7 +23,7 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-koiboi}:${POSTGRES_PASSWORD:-koiboi}@db:5432/${POSTGRES_DB:-koiboi_study}
     ports:
-      - "${PORT:-8000}:8000"
+      - "${PORT:-8080}:8080"
     depends_on:
       db:
         condition: service_healthy
