@@ -22,5 +22,10 @@ if not os.path.exists(uvicorn_path):
 
 args = [uvicorn_path, "app.main:app", "--reload", "--app-dir", "src"]
 
+# Ensure the venv site-packages are on PYTHONPATH for reload subprocesses
+venv_site_packages = os.path.join(HERE, ".venv", "lib", "python3.12", "site-packages")
+existing = os.environ.get("PYTHONPATH", "")
+os.environ["PYTHONPATH"] = f"{venv_site_packages}:{existing}" if existing else venv_site_packages
+
 # Replace current process with uvicorn so signals (Ctrl+C) are handled by uvicorn.
 os.execv(uvicorn_path, args)
